@@ -59,7 +59,7 @@ function onCalculate(date) {
 
     // 2. 特殊禁忌 (地雷)
     setTimeout(() => {
-      import('./components/NinePalaceGrid.js').then(m => m.createWarningPanel(warningArea, advancedData));
+      import('./components/NinePalaceGrid.js').then(m => m.createWarningPanel(warningArea, hourBranch, advancedData));
     }, 150);
 
     // 3. 泊地方位 (出口)

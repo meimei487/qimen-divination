@@ -46,23 +46,40 @@ function getWuxingColor(wuxing) {
 // ---------------------------------------------------------
 // 第二步：特殊禁忌 (截路空亡)
 // ---------------------------------------------------------
-export function createWarningPanel(container, advancedData) {
-  if (!advancedData.isJieLu) {
+export function createWarningPanel(container, hourBranch, advancedData) {
+  const { isJieLu, kongWang } = advancedData;
+  const isHourVoid = kongWang?.includes(hourBranch);
+  
+  if (!isJieLu && !isHourVoid) {
     container.innerHTML = `
       <div class="legend-group glass-panel result-area" style="opacity: 0.7; border-left: 5px solid #10b981; background: rgba(16, 185, 129, 0.03);">
          <div style="color: #6ee7b7; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
-           <span style="font-size: 1.2rem;">✅</span> 當前時空無重大「截路」禁忌，可放心依計畫行事。
+           <span style="font-size: 1.2rem;">✅</span> 當前時空無重大「截路」或「空亡」禁忌，可放心依計畫行事。
          </div>
       </div>
     `;
   } else {
+    let warningHtml = '';
+    if (isJieLu) {
+      warningHtml += `
+        <div style="margin-bottom: 12px; color: #fca5a5; font-size: 1.05rem; line-height: 1.6;">
+          <b style="color: #ef4444;">🛑 截路空亡</b>：此時辰辦事極易遇阻或徒勞無功。<b>宜守不宜動。</b>
+        </div>`;
+    }
+    if (isHourVoid) {
+      warningHtml += `
+        <div style="color: #fbbf24; font-size: 1.05rem; line-height: 1.6;">
+          <b style="color: #fbbf24;">🌪️ 時落空亡</b>：當前時辰落入日系空亡區（${kongWang.join('、')}），事多虛假，成事不易。
+        </div>`;
+    }
+    
     container.innerHTML = `
-      <div class="legend-group glass-panel result-area" style="border-left: 5px solid #ef4444; background: rgba(239, 68, 68, 0.05);">
-         <div class="legend-title" style="color: #f87171; font-weight: 900; letter-spacing: 0.1em;">
-           <span class="legend-icon">🛑</span> 特殊重大禁忌 (時辰大忌)
+      <div class="legend-group glass-panel result-area" style="border-left: 5px solid ${isJieLu ? '#ef4444' : '#fbbf24'}; background: rgba(255, 150, 0, 0.05);">
+         <div class="legend-title" style="color: ${isJieLu ? '#f87171' : '#fbbf24'}; font-weight: 900; letter-spacing: 0.1em;">
+           <span class="legend-icon">⚠️</span> 特殊重大禁忌 (時辰大忌)
          </div>
-         <div style="margin-top: 10px; color: #fca5a5; font-size: 1.05rem; line-height: 1.6;">
-            <b>截路空亡</b>：此時辰辦事極易遇阻或徒勞無功。<b>逢此大忌，宜守不宜動。</b>
+         <div style="margin-top: 10px;">
+           ${warningHtml}
          </div>
       </div>
     `;
