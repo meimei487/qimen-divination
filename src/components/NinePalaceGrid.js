@@ -309,15 +309,19 @@ export function createNinePalaceGrid(container, escapeData, stemInteraction) {
     const stemPart = stemInteraction ? (() => {
       const { relation, verdict, dayInfo, hourInfo } = stemInteraction;
       const rc = RELATION_COLORS[relation] || '#94a3b8';
+      const isHourToDay = relation === 'generate' || relation === 'overcome';
+      
+      const dayHtml = `<span class="sp-badge day-badge">日 ${dayInfo.stem}</span><span class="sp-palace">${dayInfo.palace}</span>`;
+      const hourHtml = `<span class="sp-badge hour-badge">時 ${hourInfo.stem}</span><span class="sp-palace">${hourInfo.palace}</span>`;
+      const relLabel = RELATION_LABELS[relation] || '比和';
+
       return `
         <div class="legend-group legend-stem-group">
           <div class="legend-title">🔗 日時宮位生剋</div>
           <div class="stem-palace-row">
-            <span class="sp-badge day-badge">日 ${dayInfo.stem}</span>
-            <span class="sp-palace">${dayInfo.palace}</span>
-            <span class="sp-relation" style="color:${rc}">${RELATION_LABELS[relation]}</span>
-            <span class="sp-palace">${hourInfo.palace}</span>
-            <span class="sp-badge hour-badge">時 ${hourInfo.stem}</span>
+            ${isHourToDay ? hourHtml : dayHtml}
+            <span class="sp-relation" style="color:${rc}">${relLabel}</span>
+            ${isHourToDay ? dayHtml : hourHtml}
           </div>
           <div class="sp-verdict" style="color:${rc}">${verdict}</div>
         </div>
