@@ -115,6 +115,10 @@ export function createNinePalaceGrid(container, escapeData, stemInteraction, adv
         <marker id="rel-arrow" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto">
           <polygon points="0 0, 6 2.5, 0 5" fill="${relationColor}" opacity="0.8"/>
         </marker>
+        <!-- 🌀 空亡斜紋圖案 -->
+        <pattern id="void-pattern" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="10" stroke="rgba(255,255,255,0.06)" stroke-width="4" />
+        </pattern>
       </defs>
   `;
 
@@ -160,7 +164,7 @@ export function createNinePalaceGrid(container, escapeData, stemInteraction, adv
       let useGlow = false;
 
       if (isKongWang) {
-        fillColor = 'rgba(100,116,139,0.15)'; // 灰色背景黯淡感
+        fillColor = 'rgba(100,116,139,0.12)'; 
         strokeColor = 'rgba(100,116,139,0.3)';
         useGlow = false;
       }
@@ -188,7 +192,14 @@ export function createNinePalaceGrid(container, escapeData, stemInteraction, adv
           ${useGlow ? 'filter="url(#glow)"' : ''}
           class="palace-cell ${isEscapeHighlight ? 'palace-highlighted' : ''} ${isKongWang ? 'palace-void' : ''}"
         />
+        ${isKongWang ? `
+          <rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" rx="9"
+            fill="url(#void-pattern)" opacity="0.6" pointer-events="none" />
+        ` : ''}
       `;
+
+      // 內容群組 (若空亡則半透明)
+      svgContent += `<g style="opacity: ${isKongWang ? 0.45 : 1};">`;
 
       // 方位名（左上角，小字）
       svgContent += `
@@ -269,6 +280,8 @@ export function createNinePalaceGrid(container, escapeData, stemInteraction, adv
             fill="#ffd700" opacity="0.5"/>
         `;
       }
+
+      svgContent += `</g>`; // 關閉內容群組
     }
   }
 
