@@ -82,6 +82,13 @@ export const ZHI_TO_PALACE = {
   '戌': '乾宮', '亥': '乾宮',
 };
 
+// 九宮→方位名稱
+export const PALACE_DIRECTIONS = {
+  '巽宮': '東南', '離宮': '南', '坤宮': '西南',
+  '震宮': '東', '中宮': '中', '兌宮': '西',
+  '艮宮': '東北', '坎宮': '北', '乾宮': '西北',
+};
+
 // 九宮→五行
 export const PALACE_WUXING = {
   '坎宮': '水',

@@ -2,7 +2,7 @@
  * 九宮格方位圖 SVG 元件
  */
 
-import { NINE_PALACES, ZHI_TO_PALACE } from '../engine/constants.js';
+import { NINE_PALACES, ZHI_TO_PALACE, PALACE_DIRECTIONS } from '../engine/constants.js';
 
 /**
  * 九宮格佈局 (洛書排列):
@@ -15,12 +15,6 @@ const GRID_LAYOUT = [
   ['震宮', '中宮', '兌宮'],
   ['艮宮', '坎宮', '乾宮'],
 ];
-
-const PALACE_DIRECTIONS = {
-  '巽宮': '東南', '離宮': '南', '坤宮': '西南',
-  '震宮': '東', '中宮': '中', '兌宮': '西',
-  '艮宮': '東北', '坎宮': '北', '乾宮': '西北',
-};
 
 const PALACE_COLORS = {
   '巽宮': '#22c55e', '離宮': '#ef4444', '坤宮': '#a3763d',
