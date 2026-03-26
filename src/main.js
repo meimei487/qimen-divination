@@ -12,8 +12,9 @@ import { createResultPanel } from './components/ResultPanel.js';
 import { getMonthGeneral } from './engine/monthGeneral.js';
 import { getFourPillars } from './engine/stemBranch.js';
 import { getEscapeDirections } from './engine/directions.js';
-import { assessStemInteraction } from './engine/stemRelation.js';
+import { assessPillarInteraction } from './engine/stemRelation.js';
 import { evaluateEnergy } from './engine/wuxing.js';
+import { getKongWang, isJieLuKongWang, getNoblemanBranches } from './engine/constants.js';
 
 // 容器
 const inputContainer = document.getElementById('input-area');
@@ -40,18 +41,29 @@ function onCalculate(date) {
     const hourBranch = fourPillars.hour.branch;
     const escapeDirections = getEscapeDirections(monthGeneralInfo.monthGeneral, hourBranch);
 
-    // 4. 日時生剋
-    const stemInteraction = assessStemInteraction(fourPillars.day.stem, fourPillars.hour.stem);
+    // 4. 日時生剋與地支互動
+    const stemInteraction = assessPillarInteraction(fourPillars.day, fourPillars.hour);
 
-    // 5. 五行能量
+    // 5. 五星能量
     const energyResult = evaluateEnergy(
       fourPillars.day.stem,
       fourPillars.hour.stem,
       monthGeneralInfo.lunarMonth
     );
 
+    // 6. 進階斷法 (空亡、截路空亡、天乙貴人)
+    const kongWang = getKongWang(fourPillars.day.stem, fourPillars.day.branch);
+    const isJieLu = isJieLuKongWang(fourPillars.day.stem, hourBranch);
+    const noblemen = getNoblemanBranches(fourPillars.day.stem);
+
+    const advancedData = {
+      kongWang,
+      isJieLu,
+      noblemen
+    };
+
     // 渲染結果 (帶交錯動畫)
-    createNinePalaceGrid(palaceContainer, escapeDirections, stemInteraction);
+    createNinePalaceGrid(palaceContainer, escapeDirections, stemInteraction, advancedData);
 
     setTimeout(() => {
       createStemRelator(stemContainer, stemInteraction);

@@ -74,6 +74,15 @@ export function createStemRelator(container, interaction) {
         <div class="verdict-desc">
           ${interaction.description}
         </div>
+        ${interaction.branchRelation ? `
+        <div class="verdict-divider" style="border-top: 1px dashed ${colors.border}; margin: 10px 0;"></div>
+        <div class="branch-verdict" style="color: ${interaction.branchRelation.color}; font-weight: bold; font-size: 0.9em; margin-bottom: 4px;">
+          📌 地支暗流：${interaction.branchRelation.label}
+        </div>
+        <div class="verdict-desc" style="font-size: 0.85em; opacity: 0.9;">
+          ${interaction.branchRelation.desc}（日支${interaction.dayInfo.branch} - 時支${interaction.hourInfo.branch}）
+        </div>
+        ` : ''}
       </div>
     </div>
   `;

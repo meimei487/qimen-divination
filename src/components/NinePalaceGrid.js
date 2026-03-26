@@ -56,7 +56,7 @@ function getWuxingColor(wuxing) {
   return colors[wuxing] || '#94a3b8';
 }
 
-export function createNinePalaceGrid(container, escapeData, stemInteraction) {
+export function createNinePalaceGrid(container, escapeData, stemInteraction, advancedData = {}) {
   // escapeData = { taiChong, xiaoJi, congKui, allDirections }
   // stemInteraction = { relation, dayInfo: { palace, stem, wuxing }, hourInfo: { palace, stem, wuxing } }
 
@@ -147,6 +147,10 @@ export function createNinePalaceGrid(container, escapeData, stemInteraction) {
       const hasHour = stemArr.some(s => s.role === 'hour');
       const hasBoth = hasDay && hasHour;
 
+      // 進階斷法徽章檢查
+      const isKongWang = advancedData.kongWang?.some(b => ZHI_TO_PALACE[b] === palace);
+      const isNobleman = advancedData.noblemen?.some(b => ZHI_TO_PALACE[b] === palace);
+
       // ── 三個固定垂直區塊 ──────────────────────────
       //  zone1 (宮名)   ~ 35% 高
       //  zone2 (干名)   ~ 58% 高（中部）
@@ -161,9 +165,16 @@ export function createNinePalaceGrid(container, escapeData, stemInteraction) {
       let fillColor = 'rgba(255,255,255,0.05)';
       let useGlow = false;
 
+      if (isKongWang) {
+        fillColor = 'rgba(100,116,139,0.15)'; // 灰色背景黯淡感
+        strokeColor = 'rgba(100,116,139,0.3)';
+        useGlow = false;
+      }
+
       if (isEscapeHighlight) {
         strokeColor = '#ffd700'; strokeWidth = 2.5;
-        fillColor = 'rgba(255,215,0,0.10)'; useGlow = true;
+        fillColor = isKongWang ? 'rgba(255,215,0,0.05)' : 'rgba(255,215,0,0.10)'; 
+        useGlow = true;
       }
       if (hasBoth) {
         strokeColor = relationColor; strokeWidth = 2.5;
@@ -181,7 +192,7 @@ export function createNinePalaceGrid(container, escapeData, stemInteraction) {
         <rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" rx="9"
           fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}"
           ${useGlow ? 'filter="url(#glow)"' : ''}
-          class="palace-cell ${isEscapeHighlight ? 'palace-highlighted' : ''}"
+          class="palace-cell ${isEscapeHighlight ? 'palace-highlighted' : ''} ${isKongWang ? 'palace-void' : ''}"
         />
       `;
 
@@ -191,6 +202,24 @@ export function createNinePalaceGrid(container, escapeData, stemInteraction) {
           ${direction}
         </text>
       `;
+
+      // 空亡徽章
+      if (isKongWang) {
+        svgContent += `
+          <circle cx="${x + cellSize - 18}" cy="${y + 16}" r="9" fill="rgba(100,116,139,0.9)" />
+          <text x="${x + cellSize - 18}" y="${y + 19.5}" fill="#fff" font-size="9" text-anchor="middle" font-family="'Noto Serif TC', serif" font-weight="bold">空</text>
+        `;
+      }
+      
+      // 貴人徽章
+      if (isNobleman) {
+        // 如果有空亡徽章，往左移
+        const badgeX = isKongWang ? x + cellSize - 40 : x + cellSize - 18;
+        svgContent += `
+          <circle cx="${badgeX}" cy="${y + 16}" r="9" fill="rgba(168,85,247,0.9)" />
+          <text x="${badgeX}" y="${y + 19.5}" fill="#fff" font-size="9" text-anchor="middle" font-family="'Noto Serif TC', serif" font-weight="bold">貴</text>
+        `;
+      }
 
       // 五行標籤（右下角）
       svgContent += `
@@ -328,7 +357,17 @@ export function createNinePalaceGrid(container, escapeData, stemInteraction) {
       `;
     })() : '';
 
-    legendHTML = `<div class="direction-legend">${escapePart}${stemPart}</div>`;
+    const advancedPart = (advancedData.isJieLu || advancedData.kongWang?.length) ? `
+      <div class="legend-group">
+        <div class="legend-title" style="color: #f87171;">⚠️ 特殊星曜警示</div>
+        <div class="legend-items" style="font-size: 0.9em; opacity: 0.9;">
+          ${advancedData.isJieLu ? `<div style="margin-bottom:4px">⛔ <span style="color:#f87171;font-weight:bold;">截路空亡</span>：此時辰出行、辦事易遇阻礙或空跑一趟。</div>` : ''}
+          ${advancedData.kongWang?.length ? `<div>🌫️ <span style="color:#94a3b8;font-weight:bold;">日系空亡</span>：落入【${advancedData.kongWang.join('、')}】宮位之事物，能量將大幅減弱。</div>` : ''}
+        </div>
+      </div>
+    ` : '';
+
+    legendHTML = `<div class="direction-legend">${escapePart}${stemPart}${advancedPart}</div>`;
   }
 
   container.innerHTML = `

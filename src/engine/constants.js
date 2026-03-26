@@ -146,3 +146,72 @@ export const SHICHEN_NAMES = {
   '戌': '戌時 (19:00-20:59)',
   '亥': '亥時 (21:00-22:59)',
 };
+
+// 取得天乙貴人地支
+export function getNoblemanBranches(dayStem) {
+  const map = {
+    '甲': ['丑', '未'], '戊': ['丑', '未'], '庚': ['丑', '未'],
+    '乙': ['子', '申'], '己': ['子', '申'],
+    '丙': ['亥', '酉'], '丁': ['亥', '酉'],
+    '壬': ['卯', '巳'], '癸': ['卯', '巳'],
+    '辛': ['寅', '午']
+  };
+  return map[dayStem] || [];
+}
+
+// 計算空亡地支
+export function getKongWang(dayStem, dayBranch) {
+  const ganIdx = GAN_INDEX[dayStem];
+  const zhiIdx = ZHI_INDEX[dayBranch];
+  let diff = zhiIdx - ganIdx;
+  if (diff < 0) diff += 12;
+  return [DI_ZHI[(diff + 10) % 12], DI_ZHI[(diff + 11) % 12]];
+}
+
+// 判斷是否截路空亡
+export function isJieLuKongWang(dayStem, hourBranch) {
+  const map = {
+    '甲': ['申', '酉'], '己': ['申', '酉'],
+    '乙': ['午', '未'], '庚': ['午', '未'],
+    '丙': ['辰', '巳'], '辛': ['辰', '巳'],
+    '丁': ['寅', '卯'], '壬': ['寅', '卯'],
+    '戊': ['子', '丑', '戌', '亥'], '癸': ['子', '丑', '戌', '亥']
+  };
+  return map[dayStem]?.includes(hourBranch) || false;
+}
+
+// 判斷地支關係 (六合、六沖、六害、相刑)
+export function getBranchRelation(dayBranch, hourBranch) {
+  const liuhe = {
+    '子': '丑', '丑': '子', '寅': '亥', '亥': '寅', 
+    '卯': '戌', '戌': '卯', '辰': '酉', '酉': '辰', 
+    '巳': '申', '申': '巳', '午': '未', '未': '午'
+  };
+  if (liuhe[dayBranch] === hourBranch) return { type: 'liuhe', label: '六合', color: '#4ade80', desc: '時日相合，事情內部能得人暗助、進展順利。' };
+  
+  const d1 = ZHI_INDEX[dayBranch];
+  const d2 = ZHI_INDEX[hourBranch];
+  const diff = Math.abs(d1 - d2);
+  if (diff === 6) return { type: 'liuchong', label: '相沖', color: '#ef4444', desc: '時日相沖，內部波折難平、易生變故與衝突。' };
+  
+  const liuhai = {
+    '子': '未', '未': '子', '丑': '午', '午': '丑',
+    '寅': '巳', '巳': '寅', '卯': '辰', '辰': '卯',
+    '申': '亥', '亥': '申', '酉': '戌', '戌': '酉'
+  };
+  if (liuhai[dayBranch] === hourBranch) return { type: 'liuhai', label: '六害', color: '#fbbf24', desc: '時日相害，事情容易遭到暗中破壞或人事不和。' };
+  
+  const xing = [
+    ['子', '卯'], ['卯', '子'],
+    ['寅', '巳'], ['巳', '申'], ['申', '寅'],
+    ['丑', '戌'], ['戌', '未'], ['未', '丑'],
+    ['辰', '辰'], ['午', '午'], ['酉', '酉'], ['亥', '亥']
+  ];
+  for (const [x1, x2] of xing) {
+    if (x1 === dayBranch && x2 === hourBranch) {
+      return { type: 'xing', label: '相刑', color: '#f87171', desc: '時日相刑，容易有口舌是非或自尋煩惱之象。' };
+    }
+  }
+  
+  return null;
+}
