@@ -19,6 +19,18 @@ export function createResultPanel(container, data) {
     '七月', '八月', '九月', '十月', '冬月', '臘月'];
   const lunarMonthStr = lunarMonthNames[monthGeneralInfo.lunarMonth] || `第${monthGeneralInfo.lunarMonth}月`;
 
+  // 古籍名句庫 (隨機池)
+  const QUOTE_POOL = [
+    { text: '「出行避難出天門，月將加時順轉輪，卯未酉宮為泊地。」', cite: '—《聖靈經》' },
+    { text: '「凡事莫教虛空墮，直教金石與心盟。」', cite: '—《心鑑》' },
+    { text: '「得時不得位，成事在人謀。」', cite: '—《奇門筆記》' },
+    { text: '「天乙貴人神最尊，所到之處盡成祥。」', cite: '—《三命通會》' },
+    { text: '「吉凶禍福皆由心，動靜之間見方圓。」', cite: '—《玄空本義》' },
+    { text: '「知機識變，順勢而為，方能立於不敗。」', cite: '—《太乙金鏡》' },
+    { text: '「甲己申酉最為愁，乙庚午未不須求。」', cite: '—《截路空亡歌》' }
+  ];
+  const randomQuote = QUOTE_POOL[Math.floor(Math.random() * QUOTE_POOL.length)];
+
   container.innerHTML = `
     <div class="result-panel glass-panel result-area">
       <div class="section-header">
@@ -56,12 +68,12 @@ export function createResultPanel(container, data) {
         </div>
       </div>
 
-      <!-- 古籍引用 -->
+      <!-- 古籍引用 (隨機動態) -->
       <div class="quote-box">
         <div class="quote-icon">📖</div>
         <blockquote>
-          「出行避難出天門，月將加時順轉輪，卯未酉宮為泊地。」
-          <cite>—《聖靈經》</cite>
+          ${randomQuote.text}
+          <cite>${randomQuote.cite}</cite>
         </blockquote>
       </div>
     </div>
