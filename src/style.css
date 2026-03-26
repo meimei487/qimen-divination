@@ -1,0 +1,874 @@
+/* ====================================
+   奇門遁甲預測工具 — 全域樣式
+   深色主題 · 玻璃態 · 金色點綴
+   ==================================== */
+
+/* ---------- 字體 ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ---------- CSS 變數 ---------- */
+:root {
+  --bg-primary: #080c18;
+  --bg-secondary: #0e1225;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(255, 215, 0, 0.3);
+  --text-primary: #e8eaf0;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.35);
+  --gold: #ffd700;
+  --gold-dim: #b8920c;
+  --gold-glow: rgba(255, 215, 0, 0.15);
+  --accent-green: #4ade80;
+  --accent-red: #ef4444;
+  --accent-blue: #60a5fa;
+  --accent-yellow: #fbbf24;
+  --accent-orange: #f97316;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --blur: 20px;
+  --font-serif: 'Noto Serif TC', 'Songti SC', serif;
+  --font-sans: 'Inter', 'Noto Sans TC', system-ui, sans-serif;
+  --max-width: 1100px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ---------- 粒子背景 ---------- */
+#particles-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ---------- App 容器 ---------- */
+#app {
+  position: relative;
+  z-index: 1;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+/* ---------- 標題區 ---------- */
+.app-header {
+  text-align: center;
+  padding: 48px 0 36px;
+}
+
+.app-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 40%, #ffd700 70%, #fff5b1 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s ease-in-out infinite;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.app-subtitle {
+  font-family: var(--font-serif);
+  font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+  color: var(--text-secondary);
+  letter-spacing: 0.15em;
+}
+
+/* ---------- 玻璃態面板 ---------- */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.glass-panel:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- Section Header ---------- */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.section-icon {
+  font-size: 1.3rem;
+}
+
+.section-header h2 {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+}
+
+/* ---------- 輸入區 ---------- */
+.input-section {
+  margin-bottom: 32px;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.label-icon {
+  font-size: 0.95rem;
+}
+
+.input-group input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: var(--font-sans);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+.input-group input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+.input-group input::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+  cursor: pointer;
+}
+
+.tz-display {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+}
+
+/* ---------- 按鈕 ---------- */
+.input-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition);
+  outline: none;
+}
+
+.btn:focus-visible {
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  color: #1a1000;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(255, 215, 0, 0.35);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+}
+
+@keyframes pulse-btn {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.btn-pulse {
+  animation: pulse-btn 0.5s ease;
+}
+
+/* ---------- 結果區域 ---------- */
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.result-area {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.result-area.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- 九宮格 ---------- */
+.nine-palace-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.nine-palace-svg {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+}
+
+.palace-cell {
+  transition: all 0.3s ease;
+}
+
+.palace-highlighted {
+  animation: palace-glow 2s ease-in-out infinite;
+}
+
+@keyframes palace-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
+
+/* 方位圖例 */
+.direction-legend {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: rgba(255, 215, 0, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.12);
+  border-radius: var(--radius-sm);
+}
+
+.legend-title {
+  font-size: 0.85rem;
+  color: var(--gold);
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-item.taichong .legend-dot { background: #ffd700; }
+.legend-item.xiaoji .legend-dot { background: #60a5fa; }
+.legend-item.congkui .legend-dot { background: #c084fc; }
+
+/* ---------- 日時生剋 ---------- */
+.stem-pillars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.pillar {
+  text-align: center;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  min-width: 80px;
+}
+
+.pillar-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.pillar-value {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.pillar-wuxing {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.pillar-palace {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.relation-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.relation-emoji {
+  font-size: 1.5rem;
+}
+
+.relation-type {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.arrow-svg {
+  display: block;
+}
+
+/* 斷語 */
+.verdict-box {
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid;
+}
+
+.verdict-title {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.verdict-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ---------- 五行能量 ---------- */
+.energy-season {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.season-badge {
+  display: inline-block;
+  padding: 4px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.energy-content {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.energy-gauge-wrapper {
+  flex-shrink: 0;
+  width: 130px;
+  height: 130px;
+}
+
+.energy-gauge {
+  width: 100%;
+  height: 100%;
+}
+
+.gauge-arc {
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.energy-bars {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.energy-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.energy-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.energy-stem {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.energy-wuxing {
+  font-weight: 600;
+}
+
+.energy-status {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.energy-bar-track {
+  position: relative;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  overflow: visible;
+}
+
+.energy-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.energy-bar-value {
+  position: absolute;
+  right: 0;
+  top: -20px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.energy-summary {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.summary-text {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ---------- 結果面板 ---------- */
+.four-pillars-display {
+  margin-bottom: 20px;
+}
+
+.pillars-title {
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  letter-spacing: 0.1em;
+}
+
+.pillars-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.pillar-card {
+  text-align: center;
+  padding: 14px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition);
+}
+
+.pillar-card:hover {
+  border-color: var(--gold-dim);
+}
+
+.pillar-card-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  letter-spacing: 0.1em;
+}
+
+.pillar-card-stem {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.pillar-card-branch {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  margin-top: 4px;
+}
+
+/* meta 資訊 */
+.meta-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.meta-card {
+  text-align: center;
+  padding: 14px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.meta-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  letter-spacing: 0.08em;
+}
+
+.meta-value {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.meta-value.date-small {
+  font-size: 1.1rem;
+}
+
+.meta-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* 古籍引用 */
+.quote-box {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(255, 215, 0, 0.04);
+  border-left: 3px solid var(--gold-dim);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.quote-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  line-height: 1.6;
+}
+
+.quote-box blockquote {
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-style: italic;
+}
+
+.quote-box cite {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  font-style: normal;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 12px 28px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-family: var(--font-sans);
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast-error {
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.toast-info {
+  background: rgba(96, 165, 250, 0.9);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+/* ---------- Footer ---------- */
+.app-footer {
+  text-align: center;
+  padding: 32px 0 16px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.app-footer a {
+  color: var(--gold-dim);
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  color: var(--gold);
+}
+
+/* ---------- 響應式 ---------- */
+@media (max-width: 900px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .input-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stem-pillars {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .pillar {
+    min-width: 70px;
+    padding: 12px 14px;
+  }
+
+  .pillar-value {
+    font-size: 1.6rem;
+  }
+
+  .energy-content {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 600px) {
+  #app {
+    padding: 12px 12px 40px;
+  }
+
+  .glass-panel {
+    padding: 20px 16px;
+  }
+
+  .app-header {
+    padding: 32px 0 24px;
+  }
+
+  .input-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .input-actions {
+    flex-direction: column;
+  }
+
+  .input-actions .btn {
+    justify-content: center;
+  }
+
+  .results-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .stem-pillars {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .relation-arrow {
+    order: -1;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .arrow-svg {
+    transform: rotate(90deg);
+  }
+
+  .meta-info-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .pillars-row {
+    gap: 6px;
+  }
+
+  .pillar-card-stem {
+    font-size: 1.2rem;
+  }
+
+  .pillar-card-branch {
+    font-size: 1rem;
+  }
+}
+
+/* ---------- 動畫 ---------- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.input-section {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* 選取色 */
+::selection {
+  background: var(--gold-glow);
+  color: var(--gold);
+}
+
+/* 捲軸 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
