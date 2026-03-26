@@ -51,7 +51,7 @@ function onCalculate(date) {
     );
 
     // 渲染結果 (帶交錯動畫)
-    createNinePalaceGrid(palaceContainer, escapeDirections);
+    createNinePalaceGrid(palaceContainer, escapeDirections, stemInteraction);
 
     setTimeout(() => {
       createStemRelator(stemContainer, stemInteraction);
