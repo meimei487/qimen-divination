@@ -203,8 +203,10 @@ export function createNinePalaceGrid(container, escapeData, stemInteraction, adv
       const cy = y + cellSize / 2;
       palaceCenters[palace] = { cx, cy };
 
-      const isKongWang = advancedData.kongWang?.some(b => ZHI_TO_PALACE[b] === palace);
-      const isNobleman = advancedData.noblemen?.some(b => ZHI_TO_PALACE[b] === palace);
+      const { kongWang, noblemen, dayStemTombPalace } = advancedData;
+      const isKongWang = kongWang?.some(z => ZHI_TO_PALACE[z] === palace);
+      const isNobleman = noblemen?.some(z => ZHI_TO_PALACE[z] === palace);
+      const isTomb = dayStemTombPalace === palace; // 只要是日干的墓庫方位就顯示
       const highlight = highlightPalaces[palace];
       const sArr = stemPalaces[palace] || [];
       
@@ -218,8 +220,21 @@ export function createNinePalaceGrid(container, escapeData, stemInteraction, adv
       
       svgContent += `<g style="opacity:${isKongWang?0.45:1}">`;
       svgContent += `<text x="${x+8}" y="${y+16}" fill="rgba(255,255,255,0.3)" font-size="10">${PALACE_DIRECTIONS[palace]}</text>`;
-      if (isKongWang) svgContent += `<circle cx="${x+cellSize-18}" cy="${y+16}" r="9" fill="rgba(100,116,139,0.9)" /><text x="${x+cellSize-18}" y="${y+19.5}" fill="#fff" font-size="9" text-anchor="middle">空</text>`;
-      if (isNobleman) { const bX = isKongWang ? x+cellSize-40 : x+cellSize-18; svgContent += `<circle cx="${bX}" cy="${y+16}" r="9" fill="rgba(168,85,247,0.8)" /><text x="${bX}" y="${y+19.5}" fill="#fff" font-size="9" text-anchor="middle">貴</text>`; }
+      
+      let badgeX = x + cellSize - 18;
+      if (isKongWang) {
+        svgContent += `<circle cx="${badgeX}" cy="${y+16}" r="9" fill="rgba(100,116,139,0.9)" /><text x="${badgeX}" y="${y+19.5}" fill="#fff" font-size="9" text-anchor="middle">空</text>`;
+        badgeX -= 22;
+      }
+      if (isNobleman) {
+        svgContent += `<circle cx="${badgeX}" cy="${y+16}" r="9" fill="rgba(168,85,247,0.8)" /><text x="${badgeX}" y="${y+19.5}" fill="#fff" font-size="9" text-anchor="middle">貴</text>`;
+        badgeX -= 22;
+      }
+      if (isTomb) {
+        svgContent += `<circle cx="${badgeX}" cy="${y+16}" r="9" fill="rgba(88,28,135,0.95)" /><text x="${badgeX}" y="${y+19.5}" fill="#fff" font-size="9" text-anchor="middle">墓</text>`;
+        badgeX -= 22;
+      }
+
       svgContent += `<text x="${x+cellSize-9}" y="${y+cellSize-8}" fill="${PALACE_COLORS[palace]}" font-size="12" text-anchor="end" opacity="0.5">${PALACE_WUXING_LABELS[palace]}</text>`;
       svgContent += `<text x="${cx}" y="${y+cellSize*0.36}" fill="rgba(255,255,255,0.8)" font-size="18" text-anchor="middle">${palace.replace('宮','')}</text>`;
       
