@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鴻盤 AI 顧問</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500&display=swap');
+:root{
+  --bg:#09080c;--s1:#110f18;--s2:#1a1726;--bd:#28233a;
+  --gold:#c9a84c;--gold2:#e8cc88;--red:#c0392b;--red2:#e05c4a;
+  --txt:#e2d8c8;--dim:#6a6080;--grn:#3d8c5a;--grn2:#5aba7a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--txt);font-family:'Noto Sans TC',sans-serif;
+     min-height:100vh;padding:16px;max-width:480px;margin:0 auto;}
+.hdr{text-align:center;padding:24px 0 12px;margin-bottom:16px;}
+.hdr h1{font-family:'Noto Serif TC',serif;font-size:2rem;color:var(--gold);letter-spacing:.6em;margin-bottom:4px;text-indent:.6em;}
+.hdr p{font-size:.65rem;color:var(--dim);letter-spacing:.25em;}
+.hdr-line{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin-bottom:18px;}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:16px;margin-bottom:10px;}
+.card-t{font-family:'Noto Serif TC',serif;font-size:.72rem;color:var(--gold);letter-spacing:.2em;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.card-t::before{content:'';width:3px;height:14px;background:var(--gold);border-radius:2px;display:block;}
+.lbl{font-size:.58rem;color:var(--dim);display:block;margin-bottom:3px;letter-spacing:.05em;}
+input,select{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--txt);font-size:.88rem;padding:8px 10px;border-radius:6px;outline:none;font-family:'Noto Serif TC',serif;transition:border-color .2s;}
+input:focus,select:focus{border-color:var(--gold);}
+.row2{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:flex-end;margin-bottom:10px;}
+.view-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.btn-now{background:transparent;border:1px solid var(--bd);color:var(--gold);font-size:.7rem;padding:8px 14px;border-radius:6px;cursor:pointer;white-space:nowrap;font-family:'Noto Serif TC',serif;transition:all .2s;}
+.btn-now:hover{border-color:var(--gold);background:rgba(201,168,76,.08);}
+.btn-go{width:100%;background:linear-gradient(135deg,#4a3008,#c9a84c,#4a3008);color:#09080c;font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:900;letter-spacing:.5em;padding:14px;border:none;border-radius:8px;cursor:pointer;margin-bottom:14px;transition:opacity .2s;text-indent:.5em;}
+.btn-go:hover{opacity:.88;}
+#result{display:none;}
+.info-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;}
+.tag{background:var(--s2);border:1px solid var(--bd);color:var(--txt);font-size:.65rem;padding:3px 10px;border-radius:12px;font-family:'Noto Serif TC',serif;white-space:nowrap;}
+.tag.gold{border-color:var(--gold);color:var(--gold2);}
+.tag.grn{border-color:var(--grn);color:var(--grn2);}
+.tag.blue{border-color:#4a7ab8;color:#8ab8e8;}
+/* 核心斷局 */
+.main-card{border-radius:10px;padding:20px 16px;margin-bottom:10px;text-align:center;}
+.main-card.ji{background:linear-gradient(135deg,#05140a,#0a2015);border:1px solid #2a6a3a;}
+.main-card.xiong{background:linear-gradient(135deg,#14050a,#200810);border:1px solid #6a2a2a;}
+.main-card.zhong{background:var(--s1);border:1px solid var(--bd);}
+.vl{font-size:.65rem;letter-spacing:.15em;margin-bottom:8px;opacity:.7;}
+.vj{color:var(--grn2);}.vx{color:var(--red2);}.vz{color:var(--dim);}
+.vm{font-family:'Noto Serif TC',serif;font-size:1.4rem;font-weight:900;letter-spacing:.1em;margin-bottom:6px;}
+.vs{font-size:.75rem;line-height:1.7;opacity:.85;}
+.clash-row{display:flex;align-items:center;justify-content:center;gap:12px;margin:14px 0;font-family:'Noto Serif TC',serif;}
+.clash-side{text-align:center;}
+.clash-tg{font-size:1.8rem;font-weight:900;line-height:1;}
+.clash-lbl{font-size:.6rem;color:var(--dim);margin-top:3px;}
+.clash-arr{font-size:1.4rem;color:var(--dim);}
+.wx-木{color:#5aba5a;}.wx-火{color:#e07050;}.wx-土{color:#c8a050;}.wx-金{color:#c8c870;}.wx-水{color:#5090c8;}
+/* 人事宮位 */
+.pd{background:var(--s2);border-radius:8px;padding:12px;}
+.pd-t{font-size:.58rem;margin-bottom:6px;letter-spacing:.1em;}
+.pd-row{display:flex;justify-content:space-between;font-size:.73rem;font-family:'Noto Serif TC',serif;margin-bottom:3px;}
+.pd-k{color:var(--dim);}.pd-v{color:var(--txt);}
+/* 說明區塊 */
+.aline{font-size:.77rem;line-height:1.85;padding:1px 0;}
+.aline .k{color:var(--gold2);font-family:'Noto Serif TC',serif;}
+hr.dv{border:none;border-top:1px solid var(--bd);margin:8px 0;}
+/* 說明列表 */
+.desc-item{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start;}
+.desc-badge{background:var(--red);color:#fff;font-size:.58rem;padding:2px 7px;border-radius:3px;white-space:nowrap;font-family:'Noto Serif TC',serif;margin-top:2px;flex-shrink:0;}
+.desc-badge.g{background:var(--grn);}
+.desc-badge.b{background:#2a4a8a;}
+.desc-txt{font-size:.75rem;line-height:1.7;}
+.desc-txt .k{color:var(--gold2);font-family:'Noto Serif TC',serif;}
+/* 功課 */
+.lesson-item{background:var(--s2);border-radius:6px;padding:10px 12px;margin-bottom:6px;}
+.lesson-tg{font-family:'Noto Serif TC',serif;font-size:.88rem;color:var(--gold2);font-weight:700;margin-bottom:3px;}
+.lesson-txt{font-size:.72rem;color:var(--txt);line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <h1>鴻盤</h1>
+  <p>奇門遁甲 · 月將加時 · 五行斷局</p>
+</div>
+<div class="hdr-line"></div>
+
+<div class="card">
+  <div class="card-t">排盤時間</div>
+  <div class="row2">
+    <div><label class="lbl">選擇時間</label><input type="datetime-local" id="dt"></div>
+    <button class="btn-now" onclick="setNow()">當下</button>
+  </div>
+  <div class="view-row">
+    <div><label class="lbl">問事視角</label>
+    <select id="view">
+      <option value="事">事（整體走向）</option><option value="財">財（財運投資）</option>
+      <option value="情">情（感情人際）</option><option value="人">人（某人狀態）</option>
+      <option value="狀態">狀態（當下場域）</option><option value="健康">健康（身體）</option>
+      <option value="風水">風水（環境）</option>
+    </select></div>
+    <div><label class="lbl">問事描述</label>
+    <input type="text" id="qdesc" placeholder="簡短描述（選填）"></div>
+  </div>
+</div>
+<button class="btn-go" onclick="doCalc()">▶ 起 局 解 析</button>
+<div id="result"></div>
+
+<script>
+const TG=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const DZ=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const TG_WX={甲:'木',乙:'木',丙:'火',丁:'火',戊:'土',己:'土',庚:'金',辛:'金',壬:'水',癸:'水'};
+const P_WX={1:'水',2:'土',3:'木',4:'木',5:'土',6:'金',7:'金',8:'土',9:'火'};
+const P_NAME={1:'坎1',2:'坤2',3:'震3',4:'巽4',6:'乾6',7:'兌7',8:'艮8',9:'離9'};
+const P_DIR={1:'正北',2:'西南',3:'正東',4:'東南',6:'西北',7:'正西',8:'東北',9:'正南'};
+const SHENG={木:'火',火:'土',土:'金',金:'水',水:'木'};
+const KE={木:'土',土:'水',水:'火',火:'金',金:'木'};
+
+// ── 八門 ──
+const DOOR_INFO={
+  休:{field:'感情・貴人',star:'天心',inner:'書房・床鋪・臥室',outer:'酒店・休閒娛樂場所'},
+  生:{field:'財運・房子',star:'天輔',inner:'辛/生門/戊/丁貴重物品',outer:'官府・辦公場所・財務機構'},
+  傷:{field:'投資・轉折',star:'天沖',inner:'帶輪子的物品・武器',outer:'道路・停車場・體育場'},
+  杜:{field:'技術・隱私',star:'天輔',inner:'書本・合同・照片・通訊設備',outer:'樹林・隱蔽場所'},
+  景:{field:'學業・合同',star:'天英',inner:'書本・合同・照片・通訊設備',outer:'學校・教培機構'},
+  驚:{field:'是非・官司',star:'天芮',inner:'發出聲響的東西',outer:'是非之地・法院'},
+  死:{field:'房子・身體',star:'天芮',inner:'工藝品・玩具・骨董',outer:'爛尾樓・廢棄場所・墳墓'},
+  開:{field:'事業・開刀',star:'天心',inner:'開闊空間・辦公室',outer:'官府・辦公場所'}
+};
+
+// ── 九星 ──
+const STAR_INFO={
+  蓬:{char:'膽大好色・善投機取巧・貪婪',wx:'水',inner:'洗浴設備・水相關物',outer:'洗浴中心・娛樂場所・信號基站'},
+  任:{char:'任勞任怨・踏實穩重・任性',wx:'土',inner:'大肚子形狀的東西',outer:'倉庫・儲藏空間'},
+  沖:{char:'雷厲風行・鬥志昂揚・易衝動',wx:'木',inner:'木製品・植物',outer:'樹木・震動場所'},
+  輔:{char:'文質彬彬・有修養',wx:'木',inner:'書本・文具・通訊設備',outer:'學校・教培機構'},
+  英:{char:'愛面子・容易急躁・注重名節',wx:'火',inner:'燈具・電器',outer:'廟宇・政府機關高樓'},
+  柱:{char:'個性分明・叛逆・能幹',wx:'金',inner:'柱子形狀的東西',outer:'電信杆・高壓線塔'},
+  心:{char:'能屈能伸・聰明靈巧・心眼多',wx:'金',inner:'圓形物品',outer:'圓形建築・廣場'},
+  芮:{char:'敏感操心・強勢・強迫症・表裡不一',wx:'土',inner:'花草・茶葉・藥',outer:'樹林・醫療系統・垃圾中轉站'}
+};
+
+// ── 八神 ──
+const GOD_INFO={
+  符:{name:'值符',buddha:'如來佛祖',char:'主貴・代表最高領導人・正義'},
+  蛇:{name:'騰蛇',buddha:'龍王',char:'主怪異・纏繞・是非口舌'},
+  陰:{name:'太陰',buddha:'太上老君',char:'主陰暗・隱秘・暗中操作'},
+  六:{name:'六合',buddha:'觀世音菩薩',char:'主和合・合作・婚姻・貴人'},
+  白:{name:'白虎',buddha:'【待確認】',char:'主凶・破壞・血光・官司'},
+  玄:{name:'玄武',buddha:'太上老君',char:'主盜賊・欺騙・小人・陰謀'},
+  地:{name:'九地',buddha:'地藏王菩薩',char:'主隱伏・埋藏・穩固・房地產'},
+  天:{name:'九天',buddha:'準提佛母',char:'主公開・高遠・升遷・名聲'}
+};
+
+// ── 視角對應門 ──
+const VIEW_DOORS={財:['生','傷'],情:['休'],事:['開','生','景'],人:['休','生','開'],狀態:['開','休','生'],健康:['死','驚','生'],風水:['生','死','開']};
+
+// ── 天干功課 ──
+const TG_LESSON={
+  乙:{課:'優柔寡斷、猶豫不決，容易錯失良機',方向:'訓練決斷力，設截止期限強制執行'},
+  丙:{課:'掌控欲強，容易越界',方向:'學習放手，讓他人自行承責'},
+  丁:{課:'捨而不捨，過度追求完美，尖酸刻薄',方向:'接受不完美，練習真正放下'},
+  戊:{課:'貪財重利，過於務實短視',方向:'看見金錢以外的長期價值'},
+  己:{課:'想得多、欲望多，不切實際',方向:'落地執行，一次只做一件事'},
+  庚:{課:'固執、鑽牛角尖、想不通',方向:'主動聽取他人視角，練習彈性思維'},
+  辛:{課:'叛逆，容易衝動行事',方向:'三思而後行，先謀後動'},
+  壬:{課:'持之以恆不足，定力薄弱',方向:'設定長期目標並持續追蹤'},
+  癸:{課:'想不開、放不下、畏首畏尾',方向:'切斷舊有執念，接受已發生之事，向前推進'}
+};
+
+const TG_DOOR={甲:'景',戊:'景',乙:'死',己:'死',丙:'傷',庚:'傷',丁:'杜',辛:'杜',壬:'休',癸:'生'};
+
+// ── 四柱 ──
+function toJD(y,m,d){if(m<=2){y--;m+=12;}const A=Math.floor(y/100),B=2-A+Math.floor(A/4);return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524;}
+function getYGZ(y){const i=((y-4)%60+60)%60;return{tg:TG[i%10],dz:DZ[i%12]};}
+// 月干月支（節氣月，五虎遁）
+const JIEQI_MONTH_DZ={'小寒':'丑','大寒':'丑','立春':'寅','雨水':'寅','驚蟄':'卯','春分':'卯','清明':'辰','穀雨':'辰','立夏':'巳','小滿':'巳','芒種':'午','夏至':'午','小暑':'未','大暑':'未','立秋':'申','處暑':'申','白露':'酉','秋分':'酉','寒露':'戌','霜降':'戌','立冬':'亥','小雪':'亥','大雪':'子','冬至':'子'};
+const YEAR_MONTH_START={0:2,5:2,1:4,6:4,2:6,7:6,3:8,8:8,4:0,9:0};
+function getMGZ(y,m,d){
+  const t=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  let cur='大寒';
+  for(const jq of JQ){if(jq.d<=t&&JIEQI_MONTH_DZ[jq.n])cur=jq.n;}
+  const mdz=JIEQI_MONTH_DZ[cur];
+  const yti=((y-4)%10+10)%10;
+  const start=YEAR_MONTH_START[yti];
+  const offset=(DZ.indexOf(mdz)-2+12)%12;
+  return{tg:TG[(start+offset)%10],dz:mdz};
+}
+function getDGZ(y,m,d){const i=((toJD(y,m,d)-2415021)%60+60+10)%60;return{tg:TG[i%10],dz:DZ[i%12],ti:i%10};}
+function getHGZ(dti,hi){return{tg:TG[([0,2,4,6,8][dti%5]+hi)%10],dz:DZ[hi]};}
+function hIdx(h){return Math.floor(((h+1)%24)/2);}
+
+// ── 節氣/局型 ──
+const JQ=[
+  {d:'2024-01-06',n:'小寒'},{d:'2024-01-20',n:'大寒'},{d:'2024-02-04',n:'立春'},{d:'2024-02-19',n:'雨水'},
+  {d:'2024-03-05',n:'驚蟄'},{d:'2024-03-20',n:'春分'},{d:'2024-04-04',n:'清明'},{d:'2024-04-19',n:'穀雨'},
+  {d:'2024-05-05',n:'立夏'},{d:'2024-05-20',n:'小滿'},{d:'2024-06-05',n:'芒種'},{d:'2024-06-21',n:'夏至'},
+  {d:'2024-07-06',n:'小暑'},{d:'2024-07-22',n:'大暑'},{d:'2024-08-07',n:'立秋'},{d:'2024-08-22',n:'處暑'},
+  {d:'2024-09-07',n:'白露'},{d:'2024-09-22',n:'秋分'},{d:'2024-10-08',n:'寒露'},{d:'2024-10-23',n:'霜降'},
+  {d:'2024-11-07',n:'立冬'},{d:'2024-11-22',n:'小雪'},{d:'2024-12-07',n:'大雪'},{d:'2024-12-21',n:'冬至'},
+  {d:'2025-01-05',n:'小寒'},{d:'2025-01-20',n:'大寒'},{d:'2025-02-03',n:'立春'},{d:'2025-02-18',n:'雨水'},
+  {d:'2025-03-05',n:'驚蟄'},{d:'2025-03-20',n:'春分'},{d:'2025-04-04',n:'清明'},{d:'2025-04-20',n:'穀雨'},
+  {d:'2025-05-05',n:'立夏'},{d:'2025-05-21',n:'小滿'},{d:'2025-06-05',n:'芒種'},{d:'2025-06-21',n:'夏至'},
+  {d:'2025-07-07',n:'小暑'},{d:'2025-07-23',n:'大暑'},{d:'2025-08-07',n:'立秋'},{d:'2025-08-23',n:'處暑'},
+  {d:'2025-09-07',n:'白露'},{d:'2025-09-23',n:'秋分'},{d:'2025-10-08',n:'寒露'},{d:'2025-10-23',n:'霜降'},
+  {d:'2025-11-07',n:'立冬'},{d:'2025-11-22',n:'小雪'},{d:'2025-12-07',n:'大雪'},{d:'2025-12-22',n:'冬至'},
+  {d:'2026-01-05',n:'小寒'},{d:'2026-01-20',n:'大寒'},{d:'2026-02-04',n:'立春'},{d:'2026-02-19',n:'雨水'},
+  {d:'2026-03-06',n:'驚蟄'},{d:'2026-03-20',n:'春分'},{d:'2026-04-05',n:'清明'},{d:'2026-04-20',n:'穀雨'},
+  {d:'2026-05-05',n:'立夏'},{d:'2026-05-21',n:'小滿'},{d:'2026-06-06',n:'芒種'},{d:'2026-06-21',n:'夏至'},
+  {d:'2026-07-07',n:'小暑'},{d:'2026-07-23',n:'大暑'},{d:'2026-08-07',n:'立秋'},{d:'2026-08-23',n:'處暑'},
+  {d:'2026-09-08',n:'白露'},{d:'2026-09-23',n:'秋分'},{d:'2026-10-08',n:'寒露'},{d:'2026-10-23',n:'霜降'},
+  {d:'2026-11-07',n:'立冬'},{d:'2026-11-22',n:'小雪'},{d:'2026-12-07',n:'大雪'},{d:'2026-12-22',n:'冬至'},
+];
+const JC={冬至:{y:1,j:1},小寒:{y:1,j:7},大寒:{y:1,j:4},立春:{y:1,j:2},雨水:{y:1,j:8},驚蟄:{y:1,j:5},春分:{y:1,j:3},清明:{y:1,j:9},穀雨:{y:1,j:6},立夏:{y:1,j:4},小滿:{y:1,j:2},芒種:{y:1,j:8},夏至:{y:0,j:9},小暑:{y:0,j:3},大暑:{y:0,j:6},立秋:{y:0,j:8},處暑:{y:0,j:5},白露:{y:0,j:2},秋分:{y:0,j:7},寒露:{y:0,j:4},霜降:{y:0,j:1},立冬:{y:0,j:6},小雪:{y:0,j:3},大雪:{y:0,j:9}};
+function getJu(y,m,d){
+  const t=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  let cur=JQ[0];for(const jq of JQ){if(jq.d<=t)cur=jq;}
+  const c=JC[cur.n]||{y:1,j:1},jp=cur.d.split('-').map(Number);
+  const diff=toJD(y,m,d)-toJD(jp[0],jp[1],jp[2]);
+  const yuan=diff<5?'上':diff<10?'中':'下';
+  const juNum=((c.j-1+(diff<5?0:diff<10?3:6))%9)+1;
+  return{isYang:!!c.y,juNum,term:cur.n,yuan,diff};
+}
+
+// ── 月將加時 ──
+const YUEJIAN_MAP={大寒:'子',雨水:'亥',春分:'戌',穀雨:'酉',小滿:'申',夏至:'未',大暑:'午',處暑:'巳',秋分:'辰',霜降:'卯',大雪:'寅',冬至:'丑'};
+function getYuejian(y,m,d){
+  const t=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  let yj='子';for(const jq of JQ){if(jq.d<=t&&YUEJIAN_MAP[jq.n])yj=YUEJIAN_MAP[jq.n];}
+  return yj;
+}
+const DZ_PALACE={子:1,丑:8,寅:8,卯:3,辰:4,巳:4,午:9,未:2,申:2,酉:7,戌:6,亥:6};
+const TG_GNDZ={甲:'寅',乙:'辰',丙:'午',丁:'未',戊:'戌',己:'辰',庚:'申',辛:'酉',壬:'亥',癸:'子'};
+function getTgPalace(yuejian,shiDz,tg){
+  const yjIdx=DZ.indexOf(yuejian),shiIdx=DZ.indexOf(shiDz),gndIdx=DZ.indexOf(TG_GNDZ[tg]);
+  return DZ_PALACE[DZ[(yjIdx+(gndIdx-shiIdx+12)%12)%12]];
+}
+
+function getRel(a,b){
+  if(a===b)return'比合';if(SHENG[a]===b)return'我生';if(SHENG[b]===a)return'生我';
+  if(KE[a]===b)return'我克';if(KE[b]===a)return'克我';return'無直接生克';
+}
+
+function calcMain(y,m,d,h){
+  const yGZ=getYGZ(y),mGZ=getMGZ(y,m,d),dGZ=getDGZ(y,m,d);
+  const hi=hIdx(h),hGZ=getHGZ(dGZ.ti,hi);
+  const ju=getJu(y,m,d);
+  const yuejian=getYuejian(y,m,d),shiDz=hGZ.dz;
+  const humanP=getTgPalace(yuejian,shiDz,dGZ.tg);
+  const eventP=getTgPalace(yuejian,shiDz,hGZ.tg);
+  const zhishi=TG_DOOR[hGZ.tg]||'休';
+  return{yGZ,mGZ,dGZ,hGZ,ju,yuejian,shiDz,humanP,eventP,zhishi};
+}
+
+function setNow(){
+  const n=new Date(),off=n.getTimezoneOffset();
+  document.getElementById('dt').value=new Date(n-off*60000).toISOString().slice(0,16);
+}
+setNow();
+
+function doCalc(){
+  const dtv=document.getElementById('dt').value;
+  if(!dtv){alert('請選擇時間');return;}
+  const dt=new Date(dtv);
+  const y=dt.getFullYear(),m=dt.getMonth()+1,d=dt.getDate(),h=dt.getHours(),min=dt.getMinutes();
+  const view=document.getElementById('view').value;
+  const qdesc=document.getElementById('qdesc').value.trim();
+  render(calcMain(y,m,d,h),view,qdesc,{y,m,d,h,min});
+}
+
+function p2(n){return String(n).padStart(2,'0');}
+function wxc(wx){return`wx-${wx}`;}
+
+function render(R,view,qdesc,dt){
+  const div=document.getElementById('result');div.style.display='block';
+  const{yGZ,mGZ,dGZ,hGZ,ju,yuejian,shiDz,humanP,eventP,zhishi}=R;
+  const dWx=TG_WX[dGZ.tg],hTgWx=TG_WX[hGZ.tg];
+  // 生克用天干五行，不用落宮五行
+  const hWx=dWx,eWx=hTgWx;
+  const rel=getRel(hWx,eWx);
+  const doorInfo=DOOR_INFO[zhishi]||{};
+  const rDoors=VIEW_DOORS[view]||[];
+  let html='';
+
+  // ── 盤面資訊 ──
+  html+=`<div class="card"><div class="card-t">盤面資訊</div>
+    <div class="info-row"><span class="tag gold">🗓 ${dt.y}/${p2(dt.m)}/${p2(dt.d)} ${p2(dt.h)}:${p2(dt.min)}</span></div>
+    <div class="info-row"><span class="tag">四柱：${yGZ.tg}${yGZ.dz} ${mGZ.tg}${mGZ.dz} ${dGZ.tg}${dGZ.dz} ${hGZ.tg}${hGZ.dz}</span></div>
+    <div class="info-row">
+      <span class="tag gold">${ju.isYang?'陽':'陰'}遁${ju.juNum}局</span>
+      <span class="tag">${ju.yuan}元</span>
+      <span class="tag">月將：${yuejian}</span>
+      <span class="tag">值使門：${zhishi}</span>
+    </div>
+    <div class="info-row">
+      <span class="tag grn">人＝日干${dGZ.tg}（${dWx}）→ ${P_NAME[humanP]} ${P_DIR[humanP]}</span>
+      <span class="tag blue">事＝時干${hGZ.tg}（${hTgWx}）→ ${P_NAME[eventP]} ${P_DIR[eventP]}</span>
+    </div>
+  </div>`;
+
+  // ── 核心斷局 ──
+  const VM={
+    生我:{cls:'ji',e:'✅',t:'事生我',s:'對我有利，有幫助，可以做。',d:`「${eWx}」生「${hWx}」，事物支持你、欣賞你、給予你。`},
+    比合:{cls:'ji',e:'✅',t:'事比合我',s:'進展順利，能獲得不錯的結果。',d:`「${hWx}」與「${eWx}」同行，配合默契、三觀一致、互助互益。`},
+    我克:{cls:'ji',e:'⚠️',t:'人克事',s:'可有收穫，但需付出代價。',d:`「${hWx}」克「${eWx}」，你能掌控局面，但需自身消耗。`},
+    我生:{cls:'xiong',e:'❌',t:'人生事',s:'非常辛苦，且很難看到成效。',d:`「${hWx}」生「${eWx}」，你持續滋養事物，消耗自己。`},
+    克我:{cls:'xiong',e:'❌',t:'事克人',s:'非常不好，容易人財兩空。',d:`「${eWx}」克「${hWx}」，事物制約、打壓你，對你不利。`},
+    無直接生克:{cls:'zhong',e:'⚪',t:'無直接生克',s:'局勢中性，需進一步細察。',d:`「${hWx}」與「${eWx}」無直接生克關係。`}
+  };
+  const v=VM[rel]||VM['無直接生克'];
+  html+=`<div class="main-card ${v.cls}">
+    <div class="vl v${v.cls==='ji'?'j':v.cls==='xiong'?'x':'z'}">${v.e} 吉凶判定</div>
+    <div class="vm v${v.cls==='ji'?'j':v.cls==='xiong'?'x':'z'}">${v.t}</div>
+    <div class="vs">${v.s}</div>
+    <div class="clash-row">
+      <div class="clash-side"><div class="clash-tg ${wxc(hWx)}">${dGZ.tg}</div><div class="clash-lbl">人・日干<br>${dWx}・${P_NAME[humanP]}</div></div>
+      <div class="clash-arr">→</div>
+      <div class="clash-side"><div class="clash-tg ${wxc(hTgWx)}">${hGZ.tg}</div><div class="clash-lbl">事・時干<br>${hTgWx}・${P_NAME[eventP]}</div></div>
+    </div>
+    <div style="font-size:.72rem;opacity:.75;line-height:1.6;">${v.d}</div>
+  </div>`;
+
+  // ── 值使門說明 ──
+  html+=`<div class="card"><div class="card-t">值使門解析</div>
+    <div class="desc-item">
+      <span class="desc-badge">當值門</span>
+      <div class="desc-txt">此時辰當值：<span class="k">「${zhishi}門」</span>，主導領域為 <span class="k">${doorInfo.field||'—'}</span>。</div>
+    </div>
+    <div class="desc-item">
+      <span class="desc-badge g">視角</span>
+      <div class="desc-txt">問「${view}」視角，關注門類：<span class="k">${rDoors.map(d=>d+'門').join('・')}</span>。${rDoors.includes(zhishi)?'<span style="color:var(--grn2)"> ✓ 當值門與視角高度吻合，能量場有力加持。</span>':'當值門與視角未直接吻合，以五行生克為主要依據。'}</div>
+    </div>
+    <hr class="dv">
+    <div class="desc-item">
+      <span class="desc-badge b">內環境</span>
+      <div class="desc-txt">當下空間內部可留意：<span class="k">${doorInfo.inner||'—'}</span></div>
+    </div>
+    <div class="desc-item">
+      <span class="desc-badge b">外環境</span>
+      <div class="desc-txt">外部場域、地點特徵：<span class="k">${doorInfo.outer||'—'}</span></div>
+    </div>
+  </div>`;
+
+  // ── 人事宮位詳情 + 九星/八神 ──
+  // 根據落宮五行推算對應的星和神特質說明（示意性）
+  const WX_STAR={木:['沖','輔'],火:['英'],土:['芮','任'],金:['柱','心'],水:['蓬']};
+  const humanStars=WX_STAR[hWx]||[];
+  const eventStars=WX_STAR[eWx]||[];
+
+  html+=`<div class="card"><div class="card-t">人與事的能量場</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+      <div class="pd">
+        <div class="pd-t" style="color:var(--grn2);">▎人（日干）</div>
+        <div class="pd-row"><span class="pd-k">天干</span><span class="pd-v ${wxc(dWx)}">${dGZ.tg}（${dWx}）</span></div>
+        <div class="pd-row"><span class="pd-k">落宮</span><span class="pd-v">${P_NAME[humanP]} ${P_DIR[humanP]}</span></div>
+        <div class="pd-row"><span class="pd-k">宮五行</span><span class="pd-v ${wxc(hWx)}">${hWx}</span></div>
+        <div class="pd-row"><span class="pd-k">對應星</span><span class="pd-v">${humanStars.join('・')||'—'}</span></div>
+      </div>
+      <div class="pd">
+        <div class="pd-t" style="color:#8ab8e8;">▎事（時干）</div>
+        <div class="pd-row"><span class="pd-k">天干</span><span class="pd-v ${wxc(hTgWx)}">${hGZ.tg}（${hTgWx}）</span></div>
+        <div class="pd-row"><span class="pd-k">落宮</span><span class="pd-v">${P_NAME[eventP]} ${P_DIR[eventP]}</span></div>
+        <div class="pd-row"><span class="pd-k">宮五行</span><span class="pd-v ${wxc(eWx)}">${eWx}</span></div>
+        <div class="pd-row"><span class="pd-k">對應星</span><span class="pd-v">${eventStars.join('・')||'—'}</span></div>
+      </div>
+    </div>`;
+
+  // 九星象意說明
+  const allStars=[...new Set([...humanStars,...eventStars])];
+  if(allStars.length>0){
+    html+=`<hr class="dv"><div style="font-size:.62rem;color:var(--dim);margin-bottom:6px;letter-spacing:.1em;">九星象意</div>`;
+    allStars.forEach(s=>{
+      const si=STAR_INFO[s];if(!si)return;
+      html+=`<div class="desc-item" style="margin-bottom:6px;">
+        <span class="desc-badge">天${s}星</span>
+        <div class="desc-txt">${si.char}</div>
+      </div>`;
+    });
+  }
+  html+=`</div>`;
+
+  // ── 內外環境擴展 ──
+  html+=`<div class="card"><div class="card-t">環境參數說明</div>
+    <div style="font-size:.62rem;color:var(--dim);margin-bottom:8px;letter-spacing:.1em;">人落宮（${P_NAME[humanP]}・${hWx}）對應環境</div>`;
+  const ENV_WX={
+    木:{inner:'木製品・植物・書本・文具・通訊設備',outer:'學校・教培機構・樹林・公園'},
+    火:{inner:'燈具・電器・爐灶・紅色物品',outer:'廟宇・政府機關・高樓・南方'},
+    土:{inner:'花草・茶葉・藥・大肚子形狀物品・家具',outer:'倉庫・農田・中轉站・醫療系統'},
+    金:{inner:'金屬物品・圓形器具・辛辣食物',outer:'電信杆・高壓線塔・金融機構・西方'},
+    水:{inner:'水相關物品・流動器具・黑色物品',outer:'江河湖海・洗浴中心・娛樂場所・北方'},
+  };
+  const hEnv=ENV_WX[hWx]||{};
+  const eEnv=ENV_WX[eWx]||{};
+  html+=`<div class="desc-item"><span class="desc-badge b">內環境</span><div class="desc-txt"><span class="k">${hEnv.inner||'—'}</span></div></div>
+    <div class="desc-item"><span class="desc-badge b">外環境</span><div class="desc-txt"><span class="k">${hEnv.outer||'—'}</span></div></div>
+    <hr class="dv">
+    <div style="font-size:.62rem;color:var(--dim);margin-bottom:8px;letter-spacing:.1em;">事落宮（${P_NAME[eventP]}・${eWx}）對應環境</div>
+    <div class="desc-item"><span class="desc-badge b">內環境</span><div class="desc-txt"><span class="k">${eEnv.inner||'—'}</span></div></div>
+    <div class="desc-item"><span class="desc-badge b">外環境</span><div class="desc-txt"><span class="k">${eEnv.outer||'—'}</span></div></div>
+  </div>`;
+
+  // ── 天干功課 ──
+  const lessons=[];
+  [{l:'日干',tg:dGZ.tg},{l:'時干',tg:hGZ.tg},{l:'年干',tg:yGZ.tg},{l:'月干',tg:mGZ.tg}].forEach(({l,tg})=>{
+    if(TG_LESSON[tg])lessons.push({l,tg,data:TG_LESSON[tg]});
+  });
+  if(lessons.length>0){
+    html+=`<div class="card"><div class="card-t">天干人生功課</div>`;
+    lessons.forEach(({l,tg,data})=>{
+      html+=`<div class="lesson-item">
+        <div class="lesson-tg">【${l}・${tg}】</div>
+        <div class="lesson-txt"><div>病灶：${data.課}</div><div style="color:var(--gold2);margin-top:3px;">功課：${data.方向}</div></div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  // ── 備注 ──
+  if(qdesc){
+    html+=`<div class="card" style="border-color:rgba(201,168,76,.2);">
+      <div class="aline" style="color:var(--dim);font-size:.7rem;">問：「${qdesc}」</div>
+      <div class="aline" style="margin-top:6px;">斷語：<span class="k">${v.t} — ${v.s}</span></div>
+    </div>`;
+  }
+
+  div.innerHTML=html;div.scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>
