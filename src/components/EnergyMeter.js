@@ -18,6 +18,7 @@ export function createEnergyMeter(container, energyData) {
     return `
       <div class="energy-bar-row" style="margin-bottom: 12px;">
         <div class="energy-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; margin-bottom: 4px;">
+          <span style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; color: #cbd5e1;">[${label}]</span>
           <span class="energy-stem" style="font-weight: bold; font-size: 1.1rem; color: #fff;">${element.stem}</span>
           <span class="energy-wuxing" style="color: ${textColor}; font-weight: 600;">${element.wuxing}</span>
           <span class="energy-status" style="color: ${barColor}; font-size: 0.8rem; font-weight: bold;">[${status}]</span>

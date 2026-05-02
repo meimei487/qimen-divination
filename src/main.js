@@ -1,3 +1,4 @@
+import './style.css';
 import { createDateTimeInput } from './components/DateTimeInput.js';
 import { createEnergyMeter } from './components/EnergyMeter.js';
 import { createStemRelator } from './components/StemRelator.js';
